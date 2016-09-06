@@ -487,7 +487,7 @@ var Q;
         id = $.trim(id);
         if (id == null || !id.length)
             return null;
-        if (id.length >= 15 || !(/^\d+$/.test(id)))
+        if (id.length >= 15 || !(/^-?\d+$/.test(id)))
             return id;
         var v = parseInt(id, 10);
         if (isNaN(v))
@@ -1376,6 +1376,7 @@ var Q;
             if (Q.Config.notLoggedInHandler != null &&
                 response &&
                 response.Error &&
+                response.Error.Code == 'NotLoggedIn' &&
                 Q.Config.notLoggedInHandler(options, response)) {
                 return;
             }
@@ -3387,7 +3388,12 @@ var Slick;
                 summaryOptions.totals = {};
                 updateIdxById();
                 ensureIdUniqueness();
-                refresh();
+                if (suspend) {
+                    recalc(items);
+                }
+                else {
+                    refresh();
+                }
                 onDataChanged.notify({ dataView: self }, null, self);
             }
             function setPagingOptions(args) {
